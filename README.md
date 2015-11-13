@@ -17,7 +17,7 @@ sv.on("connected", (HostName sender, Packet req) -> {
 
 On client side:
 ```java
-SocketEx sv = new SocketEx(Info.Ip, Info.ClientPort);
+SocketEx sv = new SocketEx(SERVER_IP, SERVER_PORT);
 sv.connect(Info.Ip, Info.ServerPort);
 
 sv.on("welcome", (HostName sender, Packet p) -> {

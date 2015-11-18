@@ -43,6 +43,7 @@ public class Host extends Thread {
          */
         console.log("connecting");
         this.stopListening();
+        console.log("begin!");
 
         /* Begin the handshake */
         HostName dest = new HostName(dest_ip, dest_port);
@@ -228,7 +229,7 @@ public class Host extends Thread {
     public void run() {
         startListening();
         this.stopWaiting = true;
-        console.log("Thread is running");
+        //console.log("Thread is running");
     }
 
     @Override

@@ -12,6 +12,15 @@ public class HostName {
         this.port = port;
     }
 
+    public static HostName valueOf(String s) {
+        if(StringEx.isNullOrWhiteSpace(s))
+            throw new IllegalArgumentException("String is not HostName");
+        String []parts = s.split(":");
+        if(parts.length != 2)
+            throw new IllegalArgumentException("String is not HostName");
+        return new HostName(parts[0], Integer.valueOf(parts[1]));
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)

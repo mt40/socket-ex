@@ -1,6 +1,7 @@
 package socketex.core;
 
 import java.io.*;
+import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -21,7 +22,8 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
     public SocketEx(String ip, int port) {
         if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
             try {
-                ip = InetAddress.getLocalHost().getHostAddress(); // try to get the real IP
+                ip = Inet4Address.getLocalHost().getHostAddress(); // try to get the real IP
+                console.log("Your ip: " + ip);
             }
             catch (UnknownHostException e) {
             }

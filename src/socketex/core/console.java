@@ -3,7 +3,7 @@ package socketex.core;
 /**
  * Created by mt on 11/9/2015.
  */
-class console {
+public class console {
     public static void log(Object obj) {
         System.out.println(obj);
     }

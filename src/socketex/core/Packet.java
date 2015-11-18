@@ -8,8 +8,8 @@ import java.lang.reflect.Type;
  */
 public class Packet {
     String event;
-    String message;
-    PacketStatus status = PacketStatus.OK;
+    public String message;
+    public PacketStatus status = PacketStatus.OK;
     HostName sender, receiver;
 
     public Packet() {}
@@ -37,6 +37,11 @@ public class Packet {
     }
 
     public Packet(PacketStatus status) {
+        this.status = status;
+    }
+
+    public Packet(String message, PacketStatus status) {
+        this.message = message;
         this.status = status;
     }
 

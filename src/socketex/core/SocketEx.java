@@ -1,6 +1,8 @@
 package socketex.core;
 
 import java.io.*;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,6 +19,13 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
     }
 
     public SocketEx(String ip, int port) {
+        if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
+            try {
+                ip = InetAddress.getLocalHost().getHostAddress(); // try to get the real IP
+            }
+            catch (UnknownHostException e) {
+            }
+        }
         localhost = new Host(ip, port);
         localhost.packetHandler = this; // I will handle incoming packet
     }

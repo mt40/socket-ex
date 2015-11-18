@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.*;
 
@@ -150,6 +151,7 @@ public class Host extends Thread {
             System.err.println("Could not listen on port: " + this.name.port);
             System.exit(1);
         }
+        serverSocket.setSoTimeout(3000); // timeout after 3 seconds
 
         while (!this.stopListening) {
             Socket clientSocket = null;
@@ -157,6 +159,10 @@ public class Host extends Thread {
 
             try {
                 clientSocket = serverSocket.accept();
+            }
+            catch (SocketTimeoutException e) {
+                // socket timeout because there is no incomming connection -> retry
+                continue;
             }
             catch (IOException e) {
                 System.err.println("Accept failed.");

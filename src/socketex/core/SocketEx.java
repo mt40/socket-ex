@@ -25,10 +25,16 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
         Packet p = Packet.fromString(res);
         for (EventSubscriber lst : this.eventSubscribers) {
             /* make sure we packet is deliverd to the right people */
+            //console.logf("packet: %s\n", p);
+            //console.log(lst.name);
             if(p.receiver != null && !lst.name.equals(p.receiver))
                 continue;
+            //console.log("Packet received");
+
             if (lst.event.equals(p.event)) {
+
                 if (p.event.equals("connected")) {
+
                     AckPacket ackPacket = (AckPacket) Packet.fromString(res, AckPacket.class);
                     if(ackPacket.sequence == 0)
                         continue; // we are in the middle of the handshake so don't emit any event

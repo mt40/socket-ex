@@ -15,12 +15,16 @@ import java.util.*;
  */
 public class Host extends Thread {
     HostName name;
-    List<HostName> knownHost = new ArrayList<>();
-    Queue<HostName> unreachableHost = new LinkedList<>();
-    boolean stopListening = false, stopWaiting = true;
     Thread listenThread;
     PacketReceiveHandler packetHandler = null; // someone who will handle the incoming packet
     Timer cleanupTimer = new Timer();
+
+    List<HostName> knownHost = Collections.synchronizedList(new ArrayList()); // thread-safe list
+    Queue<HostName> unreachableHost = new LinkedList<>();
+
+    final int cleanupDelay = 10000; // 10 sec
+    boolean stopListening = false;
+    boolean stopWaiting = true;
 
     public Host(String ip, int port) {
         this.name = new HostName(ip, port);
@@ -30,12 +34,24 @@ public class Host extends Thread {
         while(!stopWaiting) {console.logf("");} // wait for the listening thread to actually run.
 
         /* Run cleanup periodically */
-        int delay = 10 * 1000; // 10 sec
         this.cleanupTimer.scheduleAtFixedRate(new TimerTask() {
             public void run() { cleanup(); }
-        }, delay, delay);
+        }, cleanupDelay, cleanupDelay);
     }
 
+    //<editor-fold desc="Code for server only">
+    private void cleanup() {
+        int count = 0;
+        while(this.unreachableHost.size() > 0) {
+            HostName h = this.unreachableHost.poll();
+            this.knownHost.remove(h); // don't care if exist or not
+            count++;
+        }
+        console.logf("Cleaned up %d hosts \n", count);
+    }
+    //</editor-fold>
+
+    //<editor-fold desc="Code for client only">
     public boolean connect(String dest_ip, int dest_port) throws IOException, InterruptedException {
         /**
          * Calling this function means the caller wants to be
@@ -84,7 +100,9 @@ public class Host extends Thread {
         this.cleanupTimer.cancel();
         stopListening();
     }
+    //</editor-fold>
 
+    //<editor-fold desc="Common code for both server and client">
     public void emit(String event, HostName receiver, Packet content) throws IOException {
         /* Add more info into the packet */
         content.sender = this.name;
@@ -114,19 +132,24 @@ public class Host extends Thread {
     }
 
     private Packet sendMessage(HostName dest, Packet packet) throws IOException {
-        Socket echoSocket = null;
+        Socket socket = null;
         PrintWriter out = null;
         BufferedReader in = null;
 
         try {
-            echoSocket = new Socket(dest.ip, dest.port);
-            out = new PrintWriter(echoSocket.getOutputStream(), true);
+            socket = new Socket(dest.ip, dest.port);
+            socket.setSoTimeout(3000); // timeout for read operation
+            out = new PrintWriter(socket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(
-                    echoSocket.getInputStream()));
+                    socket.getInputStream()));
 
             out.println(packet);
-            String req = in.readLine();
+            String req = in.readLine(); // timeout for this
             return Packet.fromString(req);
+        }
+        catch (SocketTimeoutException e) {
+            console.log("Emit timeout on read, no return packet");
+            return null;
         }
         catch (IOException e) {
             console.log(e.getMessage());
@@ -136,7 +159,7 @@ public class Host extends Thread {
         finally {
             if (out != null) out.close();
             if (in != null) in.close();
-            if (echoSocket != null) echoSocket.close();
+            if (socket != null) socket.close();
         }
     }
 
@@ -169,35 +192,9 @@ public class Host extends Thread {
                 System.exit(1);
             }
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+            // connection succeed, open a new thread to read data
+            new MyThread(clientSocket, this);
 
-            String input = in.readLine();
-            //console.log("input: " + input);
-
-            //console.log("response OK");
-            /* Response OK to confirm that the packet is received */
-            PrintWriter out = new PrintWriter(clientSocket.getOutputStream(), true);
-            out.println(new Packet()); // empty packet with OK status
-
-            /* 3-way handshake packet detected */
-            if (Packet.fromString(input).event.equals("connected")) {
-                AckPacket ackPacket = (AckPacket) Packet.fromString(input, AckPacket.class);
-
-                if (ackPacket.sequence == 1) // this means the 3-way handshake is completed
-                    this.knownHost.add(new HostName(ackPacket.sender.ip, ackPacket.sender.port));
-            }
-            /* Disconnection packet detected */
-            else if (Packet.fromString(input).event.equals("disconnected")) {
-                AckPacket ackPacket = (AckPacket) Packet.fromString(input, AckPacket.class);
-                this.knownHost.remove(ackPacket.sender);
-            }
-
-            /* Call event subscribers */
-            if(this.packetHandler != null)
-                this.packetHandler.packetReceived(input, Packet.fromString(input));
-
-            in.close();
-            clientSocket.close();
         }
         serverSocket.close();
     }
@@ -220,27 +217,17 @@ public class Host extends Thread {
         });
         this.listenThread.start();
     }
-
-    private void cleanup() {
-        int count = 0;
-        while(this.unreachableHost.size() > 0) {
-            HostName h = this.unreachableHost.poll();
-            this.knownHost.remove(h); // don't care if exist or not
-            count++;
-        }
-        console.logf("Cleaned up %d hosts \n", count);
-    }
+    //</editor-fold>
 
     @Override
     public void run() {
         startListening();
-        this.stopWaiting = true;
-        //console.log("Thread is running");
+        this.stopWaiting = true; // wait for the thread to actually run
     }
 
     @Override
     public synchronized void start() {
-        stopWaiting = false;
+        this.stopWaiting = false;
         super.start();
     }
 }

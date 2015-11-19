@@ -37,18 +37,19 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
         localhost.isServer = isServer;
     }
 
+    /**
+     * Bring packets to the right receivers with the right event
+     * @param res
+     * @throws IOException
+     */
     private void distributeResponse(String res) throws IOException {
         Packet p = Packet.fromString(res);
         for (EventSubscriber lst : this.eventSubscribers) {
             /* make sure we packet is deliverd to the right people */
-            //console.logf("packet: %s\n", p);
-            //console.log(lst.name);
             if(p.receiver != null && !lst.name.equals(p.receiver))
                 continue;
-            //console.log("Packet received");
 
             if (lst.event.equals(p.event)) {
-
                 if (p.event.equals("connected")) {
 
                     AckPacket ackPacket = (AckPacket) Packet.fromString(res, AckPacket.class);

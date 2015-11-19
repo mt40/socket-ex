@@ -118,6 +118,11 @@ public class Host extends Thread {
         }
     }
 
+    /**
+     * Send to all known hosts (except me)
+     * @param event
+     * @param content
+     */
     public void broadcast(String event, Packet content) {
         content.sender = this.name;
         int count = 0;

@@ -19,7 +19,7 @@ public class Host extends Thread {
     PacketReceiveHandler packetHandler = null; // someone who will handle the incoming packet
     Timer cleanupTimer = new Timer();
 
-    List<HostName> knownHost = Collections.synchronizedList(new ArrayList()); // thread-safe list
+    List<HostName> knownHost = new ArrayList(); // thread-safe list
     Queue<HostName> unreachableHost = new LinkedList<>();
 
     final int cleanupDelay = 10000; // 10 sec
@@ -47,7 +47,7 @@ public class Host extends Thread {
             this.knownHost.remove(h); // don't care if exist or not
             count++;
         }
-        console.logf("Cleaned up %d hosts \n", count);
+        console.logf("[ Cleaned up %d hosts ]\n", count);
     }
     //</editor-fold>
 
@@ -67,7 +67,7 @@ public class Host extends Thread {
         console.log("ack 0");
         Packet result = ack(dest, 0);
         if (result.status == PacketStatus.OK) {
-            this.knownHost.add(dest);
+            this.addKnownHost(dest);
 
             /* our part in the 3-way handshake completes, start listening again */
             this.startListening();
@@ -216,6 +216,23 @@ public class Host extends Thread {
             }
         });
         this.listenThread.start();
+    }
+
+    public void addKnownHost(HostName hostName) {
+        this.knownHost.add(hostName);
+        removeDuplicateHost();
+    }
+
+    private void removeDuplicateHost() {
+        int old = knownHost.size();
+        Set<HostName> set = new HashSet<>();
+        for (HostName host : knownHost) {
+            set.add(host);
+        }
+        this.knownHost.clear();
+        this.knownHost.addAll(new ArrayList<>(set));
+        if(old != knownHost.size())
+            console.logf("Remove %d duplicate hosts\n", old - knownHost.size());
     }
     //</editor-fold>
 

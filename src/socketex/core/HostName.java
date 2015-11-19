@@ -34,6 +34,11 @@ public class HostName {
     }
 
     @Override
+    public int hashCode() {
+        return ip.hashCode() ^ port;
+    }
+
+    @Override
     public String toString() {
         return ip + ":" + port;
     }

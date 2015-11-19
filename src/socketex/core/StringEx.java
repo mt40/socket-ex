@@ -3,6 +3,8 @@ package socketex.core;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by mt on 11/18/2015.
@@ -29,10 +31,9 @@ public class StringEx {
 //        }
     }
 
-    public static String joins(Object []o) {
-        String[] strings = new String[o.length];
-        for (int i = 0; i < o.length; ++i)
-            strings[i] = o[i].toString();
+    public static String joins(Object[] o) {
+        List<String> strings = new ArrayList<String>();
+        for (Object x : o) if (x != null) strings.add(x.toString());
         return String.join(",", strings);
     }
 }

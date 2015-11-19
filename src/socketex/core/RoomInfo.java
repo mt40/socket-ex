@@ -7,9 +7,9 @@ import java.util.List;
  */
 public class RoomInfo {
     public String channel;
-    public List<HostName> members; // id of member in this room
+    public List<String> members; // id of member in this room
 
-    public RoomInfo(String channel, List<HostName> members) {
+    public RoomInfo(String channel, List<String> members) {
         this.channel = channel;
         this.members = members;
     }

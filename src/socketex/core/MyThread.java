@@ -34,7 +34,7 @@ public class MyThread extends Thread {
                 AckPacket ackPacket = (AckPacket) Packet.fromString(input, AckPacket.class);
 
                 if (ackPacket.sequence == 1) // this means the 3-way handshake is completed
-                    parent.knownHost.add(new HostName(ackPacket.sender.ip, ackPacket.sender.port));
+                    parent.addKnownHost(new HostName(ackPacket.sender.ip, ackPacket.sender.port));
             }
             /* Disconnection packet detected */
             else if (Packet.fromString(input).event.equals("disconnected")) {

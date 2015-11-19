@@ -31,7 +31,7 @@ public class Host extends Thread {
         this.name = new HostName(ip, port);
 
         start(); // start thread
-        console.log("Waiting for thread...");
+        //console.log("Waiting for thread...");
         while(!stopWaiting) {console.logf("");} // wait for the listening thread to actually run.
 
         /* Run cleanup periodically */
@@ -49,7 +49,7 @@ public class Host extends Thread {
             count++;
         }
 
-        if(isServer) console.logf("[ Cleaned up %d hosts ]\n", count);
+        if(isServer) console.systemf("Cleaned up %d hosts.\n", count);
     }
     //</editor-fold>
 
@@ -60,24 +60,23 @@ public class Host extends Thread {
          * the client. So we stop listening to incoming event from server
          * until the handshake is completed
          */
-        console.log("connecting");
+        console.info("connecting");
         this.stopListening();
-        console.log("begin!");
 
         /* Begin the handshake */
         HostName dest = new HostName(dest_ip, dest_port);
-        console.log("ack 0");
+        console.info("ack 0");
         Packet result = ack(dest, 0);
         if (result.status == PacketStatus.OK) {
             this.addKnownHost(dest);
 
             /* our part in the 3-way handshake completes, start listening again */
             this.startListening();
-            console.log("ack 1");
+            console.info("ack 1");
             /* receive Ack from Server, send back the 2nd Ack */
             ack(dest, 1);
         }
-        console.log("connected");
+        console.info("connected");
         return true;
     }
 
@@ -97,7 +96,7 @@ public class Host extends Thread {
 
     // Notify all knownHosts that I will disappear
     public void disconnect(String username) throws IOException, InterruptedException {
-        console.log(username + " disconnect...");
+        console.info(username + " disconnect...");
         for(HostName h : this.knownHost) {
             ack(h, AckType.Disconnect, 0, username);
         }
@@ -133,11 +132,11 @@ public class Host extends Thread {
             }
             catch (IOException e) {
                 count--;
-                console.log("Broadcast: cannot send but will ignore");// ignore error and continue sending the message
+                console.error("Broadcast: cannot send but will ignore");// ignore error and continue sending the message
             }
             count++;
         }
-        if(isServer) console.logf("Sent to %d hosts\n", count);
+        if(isServer) console.infof("Sent to %d hosts\n", count);
     }
 
     private Packet sendMessage(HostName dest, Packet packet) throws IOException {
@@ -157,11 +156,11 @@ public class Host extends Thread {
             return Packet.fromString(req);
         }
         catch (SocketTimeoutException e) {
-            if(isServer) console.log("Emit timeout on read, no return packet");
+            if(isServer) console.error("Emit timeout on read, no return packet");
             return null;
         }
         catch (IOException e) {
-            console.log(e.getMessage());
+            console.error(e.getMessage());
             this.unreachableHost.add(dest);
             throw e;
         }
@@ -241,7 +240,7 @@ public class Host extends Thread {
         this.knownHost.clear();
         this.knownHost.addAll(new ArrayList<>(set));
         if(old != knownHost.size())
-            if(isServer) console.logf("Remove %d duplicate hosts\n", old - knownHost.size());
+            if(isServer) console.infof("Remove %d duplicate hosts\n", old - knownHost.size());
     }
     //</editor-fold>
 

@@ -50,7 +50,7 @@ public class MyThread extends Thread {
             clientSocket.close();
         }
         catch (IOException e) {
-            console.log(e.getMessage());
+            console.error(e.getMessage());
         }
     }
 }

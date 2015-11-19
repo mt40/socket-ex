@@ -16,7 +16,7 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
     private List<EventSubscriber> eventSubscribers = new ArrayList<>();
 
     public static void main(final String[] args) {
-        console.log("Welcome to SocketEx.");
+        console.info("Welcome to SocketEx.");
     }
 
     public SocketEx(String ip, int port) {
@@ -27,7 +27,7 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
         if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
             try {
                 ip = Inet4Address.getLocalHost().getHostAddress(); // try to get the real IP
-                console.log("Your ip: " + ip);
+                console.info("Your ip: " + ip);
             }
             catch (UnknownHostException e) {
             }

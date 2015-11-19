@@ -7,7 +7,7 @@ import java.io.IOException;
  */
 public interface SocketMonitor {
     public boolean connect(String dest_ip, int dest_port) throws IOException, InterruptedException;
-    public void disconnect() throws IOException, InterruptedException;
+    public void disconnect(String username) throws IOException, InterruptedException;
     public void emit(String event, HostName receiver, Packet content) throws IOException;
     public void broadcast(String event, Packet content) throws IOException;
 }

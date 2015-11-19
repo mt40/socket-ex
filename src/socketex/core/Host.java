@@ -86,18 +86,20 @@ public class Host extends Thread {
         return sendMessage(dest, p);
     }
 
-    private Packet ack(HostName dest, AckType type, int sequence) throws IOException {
+    private Packet ack(HostName dest, AckType type, int sequence, String username) throws IOException {
         AckPacket p = new AckPacket(this.name, dest, sequence);
-        if(type == AckType.Disconnect)
+        if(type == AckType.Disconnect) {
             p = new AckPacket(this.name, dest, "disconnected", sequence);
+            p.message = username;
+        }
         return sendMessage(dest, p);
     }
 
     // Notify all knownHosts that I will disappear
-    public void disconnect() throws IOException, InterruptedException {
-        console.log("disconnect...");
-        for(HostName h : knownHost) {
-            ack(h, AckType.Disconnect, 0);
+    public void disconnect(String username) throws IOException, InterruptedException {
+        console.log(username + " disconnect...");
+        for(HostName h : this.knownHost) {
+            ack(h, AckType.Disconnect, 0, username);
         }
         this.cleanupTimer.cancel();
         stopListening();

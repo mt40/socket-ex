@@ -79,8 +79,8 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
     }
 
     @Override
-    public void disconnect() throws IOException, InterruptedException {
-        localhost.disconnect();
+    public void disconnect(String username) throws IOException, InterruptedException {
+        localhost.disconnect(username);
     }
 
     @Override

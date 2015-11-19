@@ -25,6 +25,7 @@ public class Host extends Thread {
     final int cleanupDelay = 10000; // 10 sec
     boolean stopListening = false;
     boolean stopWaiting = true;
+    boolean isServer = false; // if not server, don't show debug log
 
     public Host(String ip, int port) {
         this.name = new HostName(ip, port);
@@ -47,7 +48,8 @@ public class Host extends Thread {
             this.knownHost.remove(h); // don't care if exist or not
             count++;
         }
-        console.logf("[ Cleaned up %d hosts ]\n", count);
+
+        if(isServer) console.logf("[ Cleaned up %d hosts ]\n", count);
     }
     //</editor-fold>
 
@@ -128,7 +130,7 @@ public class Host extends Thread {
             }
             count++;
         }
-        console.logf("Sent to %d hosts\n", count);
+        if(isServer) console.logf("Sent to %d hosts\n", count);
     }
 
     private Packet sendMessage(HostName dest, Packet packet) throws IOException {
@@ -148,7 +150,7 @@ public class Host extends Thread {
             return Packet.fromString(req);
         }
         catch (SocketTimeoutException e) {
-            console.log("Emit timeout on read, no return packet");
+            if(isServer) console.log("Emit timeout on read, no return packet");
             return null;
         }
         catch (IOException e) {
@@ -232,7 +234,7 @@ public class Host extends Thread {
         this.knownHost.clear();
         this.knownHost.addAll(new ArrayList<>(set));
         if(old != knownHost.size())
-            console.logf("Remove %d duplicate hosts\n", old - knownHost.size());
+            if(isServer) console.logf("Remove %d duplicate hosts\n", old - knownHost.size());
     }
     //</editor-fold>
 

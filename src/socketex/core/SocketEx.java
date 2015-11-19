@@ -20,6 +20,10 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
     }
 
     public SocketEx(String ip, int port) {
+        this(ip, port, false);
+    }
+
+    public SocketEx(String ip, int port, boolean isServer) {
         if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
             try {
                 ip = Inet4Address.getLocalHost().getHostAddress(); // try to get the real IP
@@ -30,6 +34,7 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
         }
         localhost = new Host(ip, port);
         localhost.packetHandler = this; // I will handle incoming packet
+        localhost.isServer = isServer;
     }
 
     private void distributeResponse(String res) throws IOException {

@@ -55,6 +55,9 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
                     if(ackPacket.sequence == 0)
                         continue; // we are in the middle of the handshake so don't emit any event
                 }
+                else if(p.event.contains("message")) {
+                    p = (MessagePacket) Packet.fromString(res, MessagePacket.class);
+                }
 
                 lst.handler.run(p.sender, p);
             }

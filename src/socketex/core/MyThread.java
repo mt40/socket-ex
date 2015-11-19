@@ -42,12 +42,7 @@ public class MyThread extends Thread {
                 parent.knownHost.remove(ackPacket.sender);
             }
 
-            /* Special handle for 'chat' packet */
-            if (Packet.fromString(input).event.contains("message")) {
-                parent.packetHandler.packetReceived(input, Packet.fromString(input, MessagePacket.class));
-            }
-            /* Call event subscribers */
-            else if (parent.packetHandler != null) {
+            if (parent.packetHandler != null) {
                 parent.packetHandler.packetReceived(input, Packet.fromString(input));
             }
 

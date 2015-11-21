@@ -3,11 +3,22 @@
  */
 package socketex.core;
 
+import java.net.Inet4Address;
+import java.net.UnknownHostException;
+
 public class HostName {
     String ip;
     int port;
 
     public HostName(String ip, int port) {
+        if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
+            try {
+                ip = Inet4Address.getLocalHost().getHostAddress(); // try to get the real IP
+                console.info("Your ip: " + ip);
+            }
+            catch (UnknownHostException e) {
+            }
+        }
         this.ip = ip;
         this.port = port;
     }

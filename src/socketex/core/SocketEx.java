@@ -27,6 +27,8 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
         localhost = new Host(ip, port);
         localhost.packetHandler = this; // I will handle incoming packet
         localhost.isServer = isServer;
+
+        console.info("Your addr: " + localhost.name);
     }
 
     /**
@@ -44,12 +46,9 @@ public class SocketEx implements PacketReceiveHandler, SocketMonitor {
             if (lst.event.equals(p.event)) {
                 if (p.event.equals("connected")) {
 
-                    AckPacket ackPacket = (AckPacket) Packet.fromString(res, AckPacket.class);
+                    AckPacket ackPacket = (AckPacket) Packet.fromString(res);
                     if(ackPacket.sequence == 0)
                         continue; // we are in the middle of the handshake so don't emit any event
-                }
-                else if(p.event.contains("message")) {
-                    p = (MessagePacket) Packet.fromString(res, MessagePacket.class);
                 }
 
                 lst.handler.run(p.sender, p);

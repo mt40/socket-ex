@@ -127,6 +127,7 @@ public class Host extends Thread {
         int count = 0;
         for (HostName dest : this.knownHost) {
             content.event = event;
+            content.receiver = dest;
             try {
                 sendMessage(dest, content);
             }

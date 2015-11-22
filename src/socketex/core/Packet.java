@@ -1,6 +1,8 @@
 package socketex.core;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonParseException;
+
 import java.lang.reflect.Type;
 
 /**
@@ -53,10 +55,26 @@ public class Packet {
 
     // return Packet from Json string
     public static Packet fromString(String json) {
+        if(tryParseJson(json, AckPacket.class))
+            return fromString(json, AckPacket.class);
+        if(tryParseJson(json, MessagePacket.class))
+            return fromString(json, MessagePacket.class);
         return new Gson().fromJson(json, Packet.class);
     }
 
     public static Packet fromString(String json, Type type) {
         return new Gson().fromJson(json, type);
+    }
+
+    public static boolean tryParseJson(String json, Type type) {
+        try {
+            Packet p = new Gson().fromJson(json, type);
+            if(p == null)
+                return false;
+            return true;
+        }
+        catch (JsonParseException e) {
+            return false;
+        }
     }
 }

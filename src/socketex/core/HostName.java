@@ -14,7 +14,6 @@ public class HostName {
         if(ip.equals("127.0.0.1") || ip.equals("localhost")) {
             try {
                 ip = Inet4Address.getLocalHost().getHostAddress(); // try to get the real IP
-                console.info("Your ip: " + ip);
             }
             catch (UnknownHostException e) {
             }

@@ -31,14 +31,14 @@ public class MyThread extends Thread {
 
             /* 3-way handshake packet detected */
             if (Packet.fromString(input).event.equals("connected")) {
-                AckPacket ackPacket = (AckPacket) Packet.fromString(input, AckPacket.class);
+                AckPacket ackPacket = (AckPacket) Packet.fromString(input);
 
                 if (ackPacket.sequence == 1) // this means the 3-way handshake is completed
                     parent.addKnownHost(new HostName(ackPacket.sender.ip, ackPacket.sender.port));
             }
             /* Disconnection packet detected */
             else if (Packet.fromString(input).event.equals("disconnected")) {
-                AckPacket ackPacket = (AckPacket) Packet.fromString(input, AckPacket.class);
+                AckPacket ackPacket = (AckPacket) Packet.fromString(input);
                 parent.knownHost.remove(ackPacket.sender);
             }
 

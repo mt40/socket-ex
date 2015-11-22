@@ -13,6 +13,13 @@ public class Tester {
         socket.on("connected", (sender, req) -> {
             console.log(sender + " connected.");
             socket.emit("welcome", sender, new Packet("Welcome to the room!"));
+            socket.broadcast("announcement", new Packet("New user"));
+        });
+
+        socket.on("broadcast_message", (sender, req) -> {
+            console.info("/broadcast requested");
+
+            socket.broadcast("broadcast", req);
         });
     }
 }

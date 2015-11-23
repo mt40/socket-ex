@@ -6,15 +6,19 @@ package socketex.core;
 class AckPacket extends Packet {
     int sequence;
 
-    public AckPacket() {}
+    public AckPacket() {
+        this.type = "AckPacket";
+    }
 
     public AckPacket(HostName sender, HostName receiver, int sequence) {
         super(sender, receiver, "connected", null);
         this.sequence = sequence;
+        this.type = "AckPacket";
     }
 
     public AckPacket(HostName sender, HostName receiver, String event, int sequence) {
         super(sender, receiver, event, null);
         this.sequence = sequence;
+        this.type = "AckPacket";
     }
 }

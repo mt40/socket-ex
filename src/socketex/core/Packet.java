@@ -10,6 +10,7 @@ import java.lang.reflect.Type;
  */
 public class Packet {
     String event;
+    String type = "Packet";
     public String message;
     public PacketStatus status = PacketStatus.OK;
     HostName sender, receiver;
@@ -55,11 +56,12 @@ public class Packet {
 
     // return Packet from Json string
     public static Packet fromString(String json) {
-        if(tryParseJson(json, AckPacket.class))
+        Packet p = new Gson().fromJson(json, Packet.class);
+        if(p.type.equals("AckPacket"))
             return fromString(json, AckPacket.class);
-        if(tryParseJson(json, MessagePacket.class))
+        else if(p.type.equals("MessagePacket"))
             return fromString(json, MessagePacket.class);
-        return new Gson().fromJson(json, Packet.class);
+        return p;
     }
 
     public static Packet fromString(String json, Type type) {
@@ -69,11 +71,11 @@ public class Packet {
     public static boolean tryParseJson(String json, Type type) {
         try {
             Packet p = new Gson().fromJson(json, type);
-            if(p == null)
-                return false;
-            return true;
+            if(p.getClass() == type)
+                return true;
+            return false;
         }
-        catch (JsonParseException e) {
+        catch (JsonParseException | ClassCastException e) {
             return false;
         }
     }

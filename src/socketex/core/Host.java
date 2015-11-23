@@ -9,6 +9,8 @@ import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.net.UnknownHostException;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by mt on 11/10/2015.
@@ -19,8 +21,8 @@ public class Host extends Thread {
     PacketReceiveHandler packetHandler = null; // someone who will handle the incoming packet
     Timer cleanupTimer = new Timer();
 
-    List<HostName> knownHost = new ArrayList(); // thread-safe list
-    Queue<HostName> unreachableHost = new LinkedList<>();
+    List<HostName> knownHost = new CopyOnWriteArrayList<>(); // thread-safe list
+    Queue<HostName> unreachableHost = new ConcurrentLinkedQueue<>();
 
     final int cleanupDelay = 10000; // 10 sec
     boolean stopListening = false;
@@ -141,6 +143,8 @@ public class Host extends Thread {
     }
 
     private Packet sendMessage(HostName dest, Packet packet) throws IOException {
+        removeDuplicateHost();
+
         Socket socket = null;
         PrintWriter out = null;
         BufferedReader in = null;

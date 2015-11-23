@@ -11,6 +11,7 @@ public class MessagePacket extends Packet {
 
     public MessagePacket(String message, List<String> recipients, String senderName) {
         super(message);
+        this.type = "MessagePacket";
         this.recipients = recipients;
         this.senderName = senderName;
     }

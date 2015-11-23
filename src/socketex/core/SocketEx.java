@@ -6,6 +6,7 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * Created by mt on 11/8/2015.
@@ -13,7 +14,7 @@ import java.util.List;
 public class SocketEx implements PacketReceiveHandler, SocketMonitor {
 
     Host localhost;
-    private List<EventSubscriber> eventSubscribers = new ArrayList<>();
+    private List<EventSubscriber> eventSubscribers = new CopyOnWriteArrayList<>();
 
     public static void main(final String[] args) {
         console.info("Welcome to SocketEx.");

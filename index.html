@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Socket-ex by kantlove</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Socket-ex</h1>
+        <p>Simple wrapper of Java Socket class. Created for my homework...</p>
+
+        <p class="view"><a href="https://github.com/kantlove/socket-ex">View the Project on GitHub <small>kantlove/socket-ex</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/kantlove/socket-ex/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/kantlove/socket-ex/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/kantlove/socket-ex">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="socket-ex" class="anchor" href="#socket-ex" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>socket-ex</h1>
+
+<p>Simple wrapper of Java Socket class. Created for my homework...</p>
+
+<h1>
+<a id="how-to-use" class="anchor" href="#how-to-use" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to use</h1>
+
+<p>For server side:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">SocketEx</span> sv <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SocketEx</span>(<span class="pl-c1">YOUR_IP</span>, <span class="pl-c1">YOUR_PORT</span>);
+<span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(<span class="pl-s"><span class="pl-pds">"</span>Listening...<span class="pl-pds">"</span></span>);
+
+sv<span class="pl-k">.</span>on(<span class="pl-s"><span class="pl-pds">"</span>connected<span class="pl-pds">"</span></span>, (<span class="pl-smi">HostName</span> sender, <span class="pl-smi">Packet</span> req) <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(req<span class="pl-k">.</span>message);
+    <span class="pl-c">// Send message back to this client (a.k.a 'sender' in this context)</span>
+    sv<span class="pl-k">.</span>emit(<span class="pl-s"><span class="pl-pds">"</span>welcome<span class="pl-pds">"</span></span>, sender, <span class="pl-k">new</span> <span class="pl-smi">Packet</span>(<span class="pl-s"><span class="pl-pds">"</span>Welcome to the room!<span class="pl-pds">"</span></span>));
+    sv<span class="pl-k">.</span>broadcast(<span class="pl-s"><span class="pl-pds">"</span>announcement<span class="pl-pds">"</span></span>, <span class="pl-k">new</span> <span class="pl-smi">Packet</span>(<span class="pl-s"><span class="pl-pds">"</span>A new user has joined!<span class="pl-pds">"</span></span>));
+});</pre></div>
+
+<p>On client side:</p>
+
+<div class="highlight highlight-source-java"><pre><span class="pl-smi">SocketEx</span> sv <span class="pl-k">=</span> <span class="pl-k">new</span> <span class="pl-smi">SocketEx</span>(<span class="pl-c1">SERVER_IP</span>, <span class="pl-c1">SERVER_PORT</span>);
+sv<span class="pl-k">.</span>connect(<span class="pl-smi">Info</span><span class="pl-k">.</span><span class="pl-smi">Ip</span>, <span class="pl-smi">Info</span><span class="pl-k">.</span><span class="pl-smi">ServerPort</span>);
+
+sv<span class="pl-k">.</span>on(<span class="pl-s"><span class="pl-pds">"</span>welcome<span class="pl-pds">"</span></span>, (<span class="pl-smi">HostName</span> sender, <span class="pl-smi">Packet</span> p) <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(p<span class="pl-k">.</span>message);
+});
+
+sv<span class="pl-k">.</span>on(<span class="pl-s"><span class="pl-pds">"</span>announcement<span class="pl-pds">"</span></span>, (<span class="pl-smi">HostName</span> sender, <span class="pl-smi">Packet</span> p) <span class="pl-k">-</span><span class="pl-k">&gt;</span> {
+    <span class="pl-smi">System</span><span class="pl-k">.</span>out<span class="pl-k">.</span>println(p<span class="pl-k">.</span>message);
+});</pre></div>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/kantlove">kantlove</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+    
+  </body>
+</html>
